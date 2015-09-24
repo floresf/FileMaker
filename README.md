@@ -1,7 +1,7 @@
 # FileMaker
 Script examples and screenshots from a FileMaker app.
 
-This is a project I've been assigned to develope at my internship.
+This is a project I've been assigned to develop at my internship.
 
 The following is the current home screen for our app.
 https://cloud.githubusercontent.com/assets/4184400/10074550/a7e94802-629e-11e5-8e4e-ea653a635575.png
