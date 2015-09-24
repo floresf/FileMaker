@@ -1,0 +1,26 @@
+#Searches Records for the provided Age Range
+Set Error Capture [ On ]
+Show Custom Dialog [ Title: "Enter Ages"; Message: "Enter the start and end ages to search the available records."; Default Button: “OK”, Commit: “Yes”; Button 2: “Cancel”, Commit: “Yes”; Input #1: peo_IMM_Immunizations::GlobalAgeStart, "Youngest Age"; Input #2: peo_IMM_Immunizations::GlobalAgeEnd, "Oldest Age" ]
+If [ Get ( LastMessageChoice ) = 2 ]
+Exit Script [ ]
+End If
+Enter Find Mode [ ]
+#Creates variable to creae a complete search statement
+Set Variable [ $AgeRange; Value:peo_IMM_Immunizations::GlobalAgeStart & " ... " & peo_IMM_Immunizations::GlobalAgeEnd ]
+#Sets the variable to the "DateCreated" field, then performs the find
+Set Field [ PEO__People::Age; $AgeRange ]
+Perform Find [ ]
+#Re-runs code when Layout is first entered.
+Constrain Found Set [ Specified Find Requests: Find Records; Criteria: peo_IMM_ISBHReport::VaccineRoundTotal: “≥ 1” ] [ Restore ]
+If [ Get ( LastError ) ≠ 0 ]
+Show Custom Dialog [ Title: "No Matches!"; Message: "Nothing was found within the set age range."; Default Button: “OK”, Commit: “Yes” ]
+#If nothing is found.. Return to initial found set.
+Show All Records
+Constrain Found Set [ Specified Find Requests: Find Records; Criteria: peo_IMM_ISBHReport::VaccineRoundTotal: “≥ 1” ] [ Restore ]
+Sort Records [ Keep records in sorted order; Specified Sort Order: peo_IMM_Immunizations::_kf_ImmunizationTypeID; ascending peo_IMM_Immunizations::Round; ascending ] [ Restore; No dialog ]
+End If
+Sort Records [ Keep records in sorted order; Specified Sort Order: peo_IMM_Immunizations::_kf_ImmunizationTypeID; ascending peo_IMM_Immunizations::Round; ascending ] [ Restore; No dialog ]
+#Clear variables and values the next search
+Set Variable [ $AgeRage; Value:"" ]
+Set Field [ peo_IMM_Immunizations::GlobalAgeStart; "" ]
+Set Field [ peo_IMM_Immunizations::GlobalAgeEnd; "" ]
