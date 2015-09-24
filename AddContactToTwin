@@ -1,0 +1,42 @@
+#While on the "Add/Edit Contacts" layout, perform these actions.
+If [ Get ( LayoutName ) = "Add/Edit Birth Records" ]
+If [ PEO__People::TwinRelated ≠ "" ]
+Beep
+Show Custom Dialog [ Title: "This contact is already related to a twin!"; Message: "Would you like to Unlink the relation or Add a twin?"; Default Button: “Cancel”, Commit: “No”; Button 2: “Unlink”, Commit: “Yes”; Button 3: “Add Twin”, Commit: “Yes” ]
+If [ Get ( LastMessageChoice ) = 2 ]
+#When user selectst "Unlink"
+Set Field [ PEO__People::TwinRelated; "" ]
+Else If [ Get ( LastMessageChoice ) = 3 ]
+#When user selects "Add Twin"
+Set Variable [ $TwinKey; Value:PEO__People::TwinRelated ]
+Go to Layout [ “Add Contact to Twin” (PEO__TwinRelated) ]
+End If
+Exit Script [ ]
+Else
+#Next line won't allow the selection of group to execute (contact is being edited)
+Go to Layout [ “Add Contact to Twin” (PEO__TwinRelated) ]
+Exit Script [ ]
+End If
+End If
+#While on the "Add Contact to Twin" layout, perform these actions.
+If [ Get (LayoutName) = "Add Contact to Twin" ]
+#If user selected choice "Add Twin" to an already existing Twin Relationship...
+If [ $TwinKey ≠ "" ]
+Insert Calculated Result [ PEO__TwinRelated::TwinRelated; $TwinKey ] [ Select ]
+Commit Records/Requests [ No dialog ]
+Go to Layout [ “Add/Edit Birth Records” (peo_BIR__BirthRecord) ]
+Exit Script [ ]
+#If user selected "Add Twin" to create a brand new Twin Relationship...
+Else If [ PEO__TwinRelated::TwinRelated = "" ]
+Replace Field Contents [ PEO__TwinRelated::TwinRelated; Replace with serial numbers: Entry option values; Initial value: 1; Increment value: 1 ] [ No dialog; Update Entry Options ]
+Set Variable [ $NewTwinKey; Value:PEO__TwinRelated::TwinRelated ]
+Go to Layout [ “Add/Edit Birth Records” (peo_BIR__BirthRecord) ]
+Set Field [ PEO__People::TwinRelated; $NewTwinKey ]
+Else
+Set Variable [ $NewTwinKey; Value:PEO__TwinRelated::TwinRelated ]
+Go to Layout [ “Add/Edit Birth Records” (peo_BIR__BirthRecord) ]
+Set Field [ PEO__People::TwinRelated; $NewTwinKey ]
+Commit Records/Requests [ No dialog ]
+End If
+Exit Script [ ]
+End If
