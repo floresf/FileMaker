@@ -1,0 +1,24 @@
+#While on the "Add/Edit Contacts" layout, perform these actions.
+If [ Get ( LayoutName ) = "Add/Edit Contacts From New Appt" ]
+If [ PEO__People::_kf_GroupID ≠ "" ]
+Beep
+Show Custom Dialog [ Title: "This contact is already in a group!"; Message: "Are you sure you want to unlink this contact from the group?"; Default Button: “No”, Commit: “No”; Button 2: “Yes”, Commit: “Yes” ]
+If [ Get ( LastMessageChoice ) = 2 ]
+Set Field [ PEO__People::_kf_GroupID; "" ]
+End If
+Exit Script [ ]
+Else
+Set Variable [ $$ContactName; Value:PEO__People::NameFirst & " " & PEO__People::NameLast ]
+#Next line won't allow the selection of group to execute (contact is being edited)
+Go to Layout [ “Add Contact to Group” (peo_GRO__Groups) ]
+Exit Script [ ]
+End If
+End If
+#While on the "Add Contact to Group" layout, perform these actions.
+If [ Get ( LayoutName ) = "Add Contact to Group" ]
+Set Variable [ $GroupID; Value:peo_GRO__Groups::__kp_GroupID ]
+Go to Layout [ “Add/Edit Contacts From New Appt” (PEO__People) ]
+Insert Calculated Result [ PEO__People::_kf_GroupID; $GroupID ] [ Select ]
+Commit Records/Requests [ No dialog ]
+Exit Script [ ]
+End If
