@@ -1,0 +1,22 @@
+#While on the "Add/Edit Contacts" layout, perform these actions.
+If [ Get ( LayoutName ) = "Add/Edit Contacts" ]
+If [ PEO__People::_kf_GroupID ≠ "" ]
+Beep
+Show Custom Dialog [ Title: "Already in a Group!"; Message: "This contact is already associated with a group."; Default Button: “OK”, Commit: “Yes” ]
+Exit Script [ ]
+Else
+Set Variable [ $$ContactName; Value:PEO__People::NameFirst & " " & PEO__People::NameLast ]
+#Next line won't allow the selection of group to execute (contact is being edited)
+New Window [ Style: Document; Close: Yes; Minimize: Yes; Maximize: Yes; Zoom Control Area: Yes; Resize: Yes ]
+Go to Layout [ “Add Contact to Group” (peo_GRO__Groups) ]
+Exit Script [ ]
+End If
+End If
+#While on the "Add Contact to Group" layout, perform these actions.
+If [ Get ( LayoutName ) = "Add Contact to Group" ]
+Set Variable [ $GroupID; Value:peo_GRO__Groups::__kp_GroupID ]
+Go to Layout [ “Add/Edit Contacts From New Appt” (PEO__People) ]
+Insert Calculated Result [ PEO__People::_kf_GroupID; $GroupID ] [ Select ]
+Commit Records/Requests [ No dialog ]
+Exit Script [ ]
+End If
