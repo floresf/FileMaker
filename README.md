@@ -1,5 +1,5 @@
 # FileMaker
-<h1><b>Script examples and screenshots from a FileMaker app.</b></h1>
+<h2><b>Script examples and screenshots from a FileMaker app.</b></h2>
 
 <h3><b>This is a project I've been assigned to develop at my internship.</b></h3>
 
